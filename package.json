@@ -1,0 +1,25 @@
+{
+  "name": "lazycoder.unity.animationsequence",
+  "displayName": "LazyCoder Animation Sequence",
+  "version": "1.0.0",
+  "unity": "6000.1",
+  "description": "Animation Sequence using DOTween in Unity.",
+  "keywords": [
+    "tween",
+    "unity"
+  ],
+  "bugs": {
+    "url": "https://github.com/lazycoder71/LazyCoder.AnimationSequence/issues",
+    "email": "lamnd.bounce@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lazycoder71/LazyCoder.AnimationSequence.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Lam Nguyen",
+    "email": "lamnd.bounce@gmail.com",
+    "url": "https://www.facebook.com/theycallmelam"
+  }
+}
