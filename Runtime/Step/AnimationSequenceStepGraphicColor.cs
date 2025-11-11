@@ -13,7 +13,7 @@ namespace LazyCoder.AnimationSequence
 
         [SerializeField] private Color _value = Color.white;
 
-        public override string DisplayName { get { return $"{((_isSelf || _owner == null) ? "Graphic (This)" : _owner.name)}: DOColor"; } }
+        public override string DisplayName => $"{((_isSelf || _owner == null) ? "Graphic (This)" : _owner.name)}: DOColor";
 
         protected override Tween GetTween(AnimationSequence animationSequence)
         {

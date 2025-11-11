@@ -23,20 +23,20 @@ namespace LazyCoder.AnimationSequence
         [HideInInspector]
         [SerializeField] protected bool _isSpeedBased = false;
 
-        [Min(0.01f), SuffixLabel("@_isSpeedBased?\"Unit/Second\":\"Second(s)\"", Overlay = true)]
-        [InlineButton("@_isSpeedBased = true", Label = "Duration", ShowIf = ("@_isSpeedBased == false"))]
-        [InlineButton("@_isSpeedBased = false", Label = "Speed Based", ShowIf = ("@_isSpeedBased == true"))]
+        [Min(0.01f)]
+        [SuffixLabel("@_isSpeedBased?\"Unit/Second\":\"Second(s)\"")]
+        [InlineButton("@_isSpeedBased = !_isSpeedBased", Label = "@GetSpeedBasedLabel()")]
+        [LabelText("@_isSpeedBased ? \"Speed\" : \"Duration\"")]
         [SerializeField] protected float _duration = 1.0f;
 
-        [SerializeField] protected Ease _ease = Ease.Linear;
+        [SerializeField] private Ease _ease = Ease.Linear;
 
         [HorizontalGroup("Update")]
-        [InlineButton("@_isIndependentUpdate = true", Label = "Timescale Based", ShowIf = ("@_isIndependentUpdate == false"))]
-        [InlineButton("@_isIndependentUpdate = false", Label = "Independent Update", ShowIf = ("@_isIndependentUpdate == true"))]
+        [InlineButton("@_isIndependentUpdate = !_isIndependentUpdate", Label = "@GetUpdateTypeLabel()")]
         [SerializeField] protected UpdateType _updateType = UpdateType.Normal;
 
         [HideInInspector]
-        [SerializeField] protected bool _isIndependentUpdate = false;
+        [SerializeField] private bool _isIndependentUpdate = false;
 
         [MinValue(0), HorizontalGroup("Loop")]
         [SerializeField] private int _loopTime = 0;
@@ -106,6 +106,16 @@ namespace LazyCoder.AnimationSequence
         private void ToggleSelf2()
         {
             _isSelf = !_isSelf;
+        }
+        
+        private string GetUpdateTypeLabel()
+        {
+            return _isIndependentUpdate ? "Independent Update" : "Timescale Based";
+        }
+        
+        private string GetSpeedBasedLabel()
+        {
+            return _isSpeedBased ? "Speed Based" : "Duration";
         }
     }
 }

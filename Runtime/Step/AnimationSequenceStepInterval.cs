@@ -7,11 +7,16 @@ namespace LazyCoder.AnimationSequence
     {
         [SerializeField] private float _duration;
 
-        public override string DisplayName { get { return "Interval"; } }
+        [SerializeField] private bool _isPrepend;
+
+        public override string DisplayName => "Interval";
 
         public override void AddToSequence(AnimationSequence animationSequence)
         {
-            animationSequence.Sequence.AppendInterval(_duration);
+            if (_isPrepend)
+                animationSequence.Sequence.PrependInterval(_duration);
+            else
+                animationSequence.Sequence.AppendInterval(_duration);
         }
     }
 }

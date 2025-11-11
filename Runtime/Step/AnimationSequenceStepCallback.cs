@@ -14,7 +14,7 @@ namespace LazyCoder.AnimationSequence
 
         [SerializeField] private UnityEvent _callback;
 
-        public override string DisplayName { get { return "Callback"; } }
+        public override string DisplayName => "Callback";
 
         public override void AddToSequence(AnimationSequence animationSequence)
         {

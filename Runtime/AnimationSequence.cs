@@ -13,7 +13,7 @@ namespace LazyCoder.AnimationSequence
         {
             Restart = 1 << 1,
             Complete = 1 << 2,
-            PlayFoward = 1 << 3,
+            PlayForward = 1 << 3,
             PlayBackwards = 1 << 4,
         }
 
@@ -25,8 +25,9 @@ namespace LazyCoder.AnimationSequence
         }
 
         [Title("Steps")]
-        [ListDrawerSettings(ShowIndexLabels = false, OnBeginListElementGUI = "BeginDrawListElement", OnEndListElementGUI = "EndDrawListElement", AddCopiesLastElement = true)]
-        [SerializeReference] private AnimationSequenceStep[] _steps = new AnimationSequenceStep[0];
+        [ListDrawerSettings(ShowIndexLabels = false, OnBeginListElementGUI = "BeginDrawListElement",
+            OnEndListElementGUI = "EndDrawListElement", AddCopiesLastElement = true)]
+        [SerializeReference] private AnimationSequenceStep[] _steps = Array.Empty<AnimationSequenceStep>();
 
         [Title("Settings")]
         [SerializeField] private bool _isAutoKill = true;
@@ -35,15 +36,15 @@ namespace LazyCoder.AnimationSequence
 
         [SerializeField] private ActionOnDisable _actionOnDisable;
 
-        [MinValue(-1), HorizontalGroup("Loop")]
+        [MinValue(-1)]
+        [HorizontalGroup("LoopSettings")]
         [SerializeField] private int _loopCount;
 
-        [ShowIf("@_loopCount != 0"), HorizontalGroup("Loop"), LabelWidth(75.0f)]
+        [ShowIf("@_loopCount != 0")]
+        [HorizontalGroup("LoopSettings")]
         [SerializeField] private LoopType _loopType;
 
-        [HorizontalGroup("Update")]
-        [InlineButton("@_isIndependentUpdate = true", Label = "Timescale Based", ShowIf = ("@_isIndependentUpdate == false"))]
-        [InlineButton("@_isIndependentUpdate = false", Label = "Independent Update", ShowIf = ("@_isIndependentUpdate == true"))]
+        [InlineButton("@_isIndependentUpdate = !_isIndependentUpdate", Label = "@GetUpdateTypeLabel()")]
         [SerializeField] private UpdateType _updateType = UpdateType.Normal;
 
         [HideInInspector]
@@ -115,11 +116,25 @@ namespace LazyCoder.AnimationSequence
             }
         }
 
-        public UpdateType UpdateType { get { return _updateType; } set { _updateType = value; } }
+        public UpdateType UpdateType
+        {
+            get => _updateType;
+            set => _updateType = value;
+        }
 
-        public ActionOnEnable OnEnableAction { get { return _actionOnEnable; } set { _actionOnEnable = value; } }
+        public ActionOnEnable OnEnableAction
+        {
+            get => _actionOnEnable;
+            set => _actionOnEnable = value;
+        }
 
-        public ActionOnDisable OnDisableAction { get { return _actionOnDisable; } set { _actionOnDisable = value; } }
+        public ActionOnDisable OnDisableAction
+        {
+            get => _actionOnDisable;
+            set => _actionOnDisable = value;
+        }
+
+        #region MonoBehaviour
 
         private void OnDestroy()
         {
@@ -138,7 +153,7 @@ namespace LazyCoder.AnimationSequence
             if (_actionOnEnable.HasFlag(ActionOnEnable.Restart))
                 _sequence?.Restart();
 
-            if (_actionOnEnable.HasFlag(ActionOnEnable.PlayFoward))
+            if (_actionOnEnable.HasFlag(ActionOnEnable.PlayForward))
                 _sequence?.PlayForward();
 
             if (_actionOnEnable.HasFlag(ActionOnEnable.PlayBackwards))
@@ -153,6 +168,8 @@ namespace LazyCoder.AnimationSequence
             if (_actionOnDisable.HasFlag(ActionOnDisable.Kill))
                 _sequence?.Kill();
         }
+
+        #endregion
 
         private void InitSequence()
         {
@@ -204,6 +221,12 @@ namespace LazyCoder.AnimationSequence
             _sequence?.Restart();
         }
 
+        public void Kill()
+        {
+            _sequence?.Kill();
+            _sequence = null;
+        }
+
 #if UNITY_EDITOR
 
         [ButtonGroup]
@@ -252,6 +275,11 @@ namespace LazyCoder.AnimationSequence
         private void EndDrawListElement(int index)
         {
             Sirenix.Utilities.Editor.SirenixEditorGUI.EndBox();
+        }
+
+        private string GetUpdateTypeLabel()
+        {
+            return _isIndependentUpdate ? "Independent Update" : "Timescale Based";
         }
 
 #endif
