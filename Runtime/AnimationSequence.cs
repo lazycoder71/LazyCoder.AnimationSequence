@@ -4,8 +4,9 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace LazyCoder.AnimationSequence
+namespace LazyCoder.AnimationSequencer
 {
+    [DisallowMultipleComponent]
     public class AnimationSequence : MonoBehaviour
     {
         [Serializable, Flags]
@@ -23,11 +24,6 @@ namespace LazyCoder.AnimationSequence
             Kill = 1 << 1,
             Pause = 1 << 2,
         }
-
-        [Title("Steps")]
-        [ListDrawerSettings(ShowIndexLabels = false, OnBeginListElementGUI = "BeginDrawListElement",
-            OnEndListElementGUI = "EndDrawListElement", AddCopiesLastElement = true)]
-        [SerializeReference] private AnimationSequenceStep[] _steps = Array.Empty<AnimationSequenceStep>();
 
         [Title("Settings")]
         [SerializeField] private bool _isAutoKill = true;
@@ -62,6 +58,9 @@ namespace LazyCoder.AnimationSequence
         private Transform _transform;
 
         private GameObject _gameObject;
+
+        // Cache of discovered steps (not serialized)
+        private AnimationSequenceStep[] _steps = Array.Empty<AnimationSequenceStep>();
 
         public Transform Transform
         {
@@ -144,7 +143,8 @@ namespace LazyCoder.AnimationSequence
 
         private void OnEnable()
         {
-            // Setup all steps
+            // Discover and setup step components
+            _steps = DiscoverSteps();
             for (int i = 0; i < _steps.Length; i++)
                 _steps[i].Setup(this);
 
@@ -176,14 +176,23 @@ namespace LazyCoder.AnimationSequence
 
         #endregion
 
+        // Made public so the custom editor can query current components
+        public AnimationSequenceStep[] DiscoverSteps()
+        {
+            return GetComponents<AnimationSequenceStep>();
+        }
+
         private void InitSequence()
         {
-            if (_sequence.IsActive())
+            // fixed null-check to avoid NullReferenceException
+            if (_sequence != null && _sequence.IsActive())
                 return;
 
             _sequence?.Kill();
             _sequence = DOTween.Sequence();
 
+            // Refresh discovered steps to ensure latest order/components
+            _steps = DiscoverSteps();
             for (int i = 0; i < _steps.Length; i++)
             {
                 _steps[i].AddToSequence(this);
@@ -236,21 +245,21 @@ namespace LazyCoder.AnimationSequence
 
         [ButtonGroup]
         [Button(Name = "", Icon = SdfIconType.SkipStartFill)]
-        private void PlayBackward()
+        public void PlayBackward()
         {
             _sequence?.PlayBackwards();
         }
 
         [ButtonGroup]
         [Button(Name = "", Icon = SdfIconType.SkipEndFill)]
-        private void PlayForward()
+        public void PlayForward()
         {
             _sequence?.PlayForward();
         }
 
         [ButtonGroup]
         [Button(Name = "", Icon = SdfIconType.StopFill)]
-        private void Stop()
+        public void Stop()
         {
             DG.DOTweenEditor.DOTweenEditorPreview.Stop(true);
 
@@ -274,7 +283,9 @@ namespace LazyCoder.AnimationSequence
 
         private void BeginDrawListElement(int index)
         {
-            Sirenix.Utilities.Editor.SirenixEditorGUI.BeginBox(_steps[index].DisplayName);
+            // kept for compatibility with any custom editor logic
+            if (index >= 0 && index < _steps.Length)
+                Sirenix.Utilities.Editor.SirenixEditorGUI.BeginBox(_steps[index].DisplayName);
         }
 
         private void EndDrawListElement(int index)
