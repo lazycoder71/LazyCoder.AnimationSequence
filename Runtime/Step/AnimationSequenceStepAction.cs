@@ -25,14 +25,15 @@ namespace LazyCoder.AnimationSequence
 
         [Min(0.01f)]
         [SuffixLabel("@_isSpeedBased?\"Unit/Second\":\"Second(s)\"")]
-        [InlineButton("@_isSpeedBased = !_isSpeedBased", Label = "@GetSpeedBasedLabel()")]
+        [InlineButton("@_isSpeedBased = !_isSpeedBased", Label = "@_isSpeedBased ? \"Speed Based\" : \"Duration\"")]
         [LabelText("@_isSpeedBased ? \"Speed\" : \"Duration\"")]
         [SerializeField] protected float _duration = 1.0f;
 
         [SerializeField] private Ease _ease = Ease.Linear;
 
         [HorizontalGroup("Update")]
-        [InlineButton("@_isIndependentUpdate = !_isIndependentUpdate", Label = "@GetUpdateTypeLabel()")]
+        [InlineButton("@_isIndependentUpdate = !_isIndependentUpdate",
+            Label = "@_isIndependentUpdate ? \"Independent\" : \"Timescale Based\"")]
         [SerializeField] protected UpdateType _updateType = UpdateType.Normal;
 
         [HideInInspector]
@@ -49,7 +50,10 @@ namespace LazyCoder.AnimationSequence
 
         [VerticalGroup("Value")]
         [SerializeField] protected bool _changeStartValue = false;
-        
+
+        public override string DisplayName =>
+            $"{typeof(T).Name} {((_isSelf || _owner == null) ? "(Self)" : _owner.ToString())}: ";
+
         public override void AddToSequence(AnimationSequence animationSequence)
         {
             if (!Application.isPlaying)
@@ -106,16 +110,6 @@ namespace LazyCoder.AnimationSequence
         private void ToggleSelf2()
         {
             _isSelf = !_isSelf;
-        }
-        
-        private string GetUpdateTypeLabel()
-        {
-            return _isIndependentUpdate ? "Independent Update" : "Timescale Based";
-        }
-        
-        private string GetSpeedBasedLabel()
-        {
-            return _isSpeedBased ? "Speed Based" : "Duration";
         }
     }
 }

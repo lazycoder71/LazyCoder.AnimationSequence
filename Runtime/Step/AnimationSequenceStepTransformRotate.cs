@@ -9,7 +9,7 @@ namespace LazyCoder.AnimationSequence
         [VerticalGroup("Value")]
         [SerializeField] private RotateMode _rotateMode = RotateMode.Fast;
 
-        public override string DisplayName { get { return $"{(_isSelf || _owner == null ? "Transform (This)" : _owner.name)}: DOLocalRotate"; } }
+        public override string DisplayName => base.DisplayName + "Local Rotate";
 
         protected override Tween GetTween(AnimationSequence animationSequence)
         {
@@ -34,6 +34,14 @@ namespace LazyCoder.AnimationSequence
             Transform owner = _isSelf ? animationSequence.Transform : _owner;
 
             return owner.DOLocalRotate(owner.localEulerAngles, 0.0f);
+        }
+        
+        public override void Setup(AnimationSequence animationSequence)
+        {
+            Transform owner = _isSelf ? animationSequence.Transform : _owner;
+
+            if (_changeStartValue)
+                owner.localEulerAngles = _valueStart;
         }
     }
 }

@@ -44,7 +44,8 @@ namespace LazyCoder.AnimationSequence
         [HorizontalGroup("LoopSettings")]
         [SerializeField] private LoopType _loopType;
 
-        [InlineButton("@_isIndependentUpdate = !_isIndependentUpdate", Label = "@GetUpdateTypeLabel()")]
+        [InlineButton("@_isIndependentUpdate = !_isIndependentUpdate",
+            Label = "@_isIndependentUpdate ? \"Independent\" : \"Timescale Based\"")]
         [SerializeField] private UpdateType _updateType = UpdateType.Normal;
 
         [HideInInspector]
@@ -143,7 +144,11 @@ namespace LazyCoder.AnimationSequence
 
         private void OnEnable()
         {
-            // If no action flagged on enable, we shouldn't init sequence
+            // Setup all steps
+            for (int i = 0; i < _steps.Length; i++)
+                _steps[i].Setup(this);
+
+            // If no action flagged on enable, we shouldn't initialize sequence
             if (_actionOnEnable != 0)
                 InitSequence();
 
@@ -238,7 +243,7 @@ namespace LazyCoder.AnimationSequence
 
         [ButtonGroup]
         [Button(Name = "", Icon = SdfIconType.SkipEndFill)]
-        private void PlayFoward()
+        private void PlayForward()
         {
             _sequence?.PlayForward();
         }
@@ -275,11 +280,6 @@ namespace LazyCoder.AnimationSequence
         private void EndDrawListElement(int index)
         {
             Sirenix.Utilities.Editor.SirenixEditorGUI.EndBox();
-        }
-
-        private string GetUpdateTypeLabel()
-        {
-            return _isIndependentUpdate ? "Independent Update" : "Timescale Based";
         }
 
 #endif

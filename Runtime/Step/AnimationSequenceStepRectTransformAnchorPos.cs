@@ -5,7 +5,7 @@ namespace LazyCoder.AnimationSequence
 {
     public class AnimationSequenceStepRectTransformAnchorPos : AnimationSequenceStepRectTransform
     {
-        public override string DisplayName { get { return $"{((_isSelf || _owner == null) ? "RectTransform (This)" : _owner.name)}: DOAnchorPos"; } }
+        public override string DisplayName => base.DisplayName + "Anchor Pos";
 
         protected override Tween GetTween(AnimationSequence animationSequence)
         {
@@ -26,6 +26,14 @@ namespace LazyCoder.AnimationSequence
             RectTransform owner = _isSelf ? animationSequence.RectTransform : _owner;
 
             return owner.DOAnchorPos(owner.anchoredPosition, 0.0f);
+        }
+        
+        public override void Setup(AnimationSequence animationSequence)
+        {
+            RectTransform owner = _isSelf ? animationSequence.RectTransform : _owner;
+
+            if (_changeStartValue)
+                owner.anchoredPosition = _valueStart;
         }
     }
 }

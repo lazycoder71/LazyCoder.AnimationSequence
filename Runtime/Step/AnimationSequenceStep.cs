@@ -16,5 +16,9 @@ namespace LazyCoder.AnimationSequence
         public abstract string DisplayName { get; }
 
         public abstract void AddToSequence(AnimationSequence animationSequence);
+
+        public virtual void Setup(AnimationSequence animationSequence)
+        {
+        }
     }
 }

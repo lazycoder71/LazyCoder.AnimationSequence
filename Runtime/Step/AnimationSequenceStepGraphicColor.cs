@@ -13,7 +13,7 @@ namespace LazyCoder.AnimationSequence
 
         [SerializeField] private Color _value = Color.white;
 
-        public override string DisplayName => $"{((_isSelf || _owner == null) ? "Graphic (This)" : _owner.name)}: DOColor";
+        public override string DisplayName => base.DisplayName + "Color";
 
         protected override Tween GetTween(AnimationSequence animationSequence)
         {
@@ -34,6 +34,14 @@ namespace LazyCoder.AnimationSequence
             Graphic owner = _isSelf ? animationSequence.Graphic : _owner;
 
             return owner.DOColor(owner.color, 0.0f);
+        }
+        
+        public override void Setup(AnimationSequence animationSequence)
+        {
+            Graphic owner = _isSelf ? animationSequence.Graphic : _owner;
+
+            if (_changeStartValue)
+                owner.color = _valueStart;
         }
     }
 }

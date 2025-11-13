@@ -9,7 +9,7 @@ namespace LazyCoder.AnimationSequence
         [VerticalGroup("Value")]
         [SerializeField] private bool _snapping = false;
 
-        public override string DisplayName { get { return $"{(_isSelf || _owner == null ? "Transform (This)" : _owner.name)}: DOLocalMove"; } }
+        public override string DisplayName => base.DisplayName + "Local Move";
 
         protected override Tween GetTween(AnimationSequence animationSequence)
         {
@@ -34,6 +34,14 @@ namespace LazyCoder.AnimationSequence
             Transform owner = _isSelf ? animationSequence.Transform : _owner;
 
             return owner.DOLocalMove(owner.localPosition, 0.0f);
+        }
+        
+        public override void Setup(AnimationSequence animationSequence)
+        {
+            Transform owner = _isSelf ? animationSequence.Transform : _owner;
+
+            if (_changeStartValue)
+                owner.localPosition = _valueStart;
         }
     }
 }

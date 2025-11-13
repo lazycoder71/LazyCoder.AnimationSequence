@@ -5,7 +5,7 @@ namespace LazyCoder.AnimationSequence
 {
     public class AnimationSequenceStepTransformScale : AnimationSequenceStepTransform
     {
-        public override string DisplayName { get { return $"{(_isSelf || _owner == null ? "Transform (This)" : _owner.name)}: DOScale"; } }
+        public override string DisplayName => base.DisplayName + "Local Scale";
 
         protected override Tween GetTween(AnimationSequence animationSequence)
         {
@@ -19,7 +19,7 @@ namespace LazyCoder.AnimationSequence
                 tween.ChangeStartValue(_relative ? owner.localScale + _valueStart : _valueStart);
             else
                 tween.ChangeStartValue(owner.localScale);
-
+            
             owner.localScale = _relative ? owner.localScale + _value : _value;
 
             return tween;
@@ -30,6 +30,14 @@ namespace LazyCoder.AnimationSequence
             Transform owner = _isSelf ? animationSequence.Transform : _owner;
 
             return owner.DOScale(owner.localScale, 0.0f);
+        }
+
+        public override void Setup(AnimationSequence animationSequence)
+        {
+            Transform owner = _isSelf ? animationSequence.Transform : _owner;
+
+            if (_changeStartValue)
+                owner.localScale = _valueStart;
         }
     }
 }

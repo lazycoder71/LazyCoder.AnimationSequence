@@ -7,10 +7,12 @@ namespace LazyCoder.AnimationSequence
 {
     public class AnimationSequenceStepCallback : AnimationSequenceStep
     {
-        [SerializeField] private bool _isInserted;
+        [HorizontalGroup("AddType")]
+        [SerializeField] private AddType _addType = AddType.Append;
 
-        [Min(0f), ShowIf("@_isInserted")]
-        [SerializeField] private float _insertTime;
+        [HorizontalGroup("AddType"), LabelWidth(75), SuffixLabel("Second(s)", true)]
+        [ShowIf("@_addType == AnimationSequenceStep.AddType.Insert"), MinValue(0)]
+        [SerializeField] private float _insertTime = 0.0f;
 
         [SerializeField] private UnityEvent _callback;
 
@@ -18,10 +20,20 @@ namespace LazyCoder.AnimationSequence
 
         public override void AddToSequence(AnimationSequence animationSequence)
         {
-            if (_isInserted)
-                animationSequence.Sequence.InsertCallback(_insertTime, () => { _callback?.Invoke(); });
-            else
-                animationSequence.Sequence.AppendCallback(() => { _callback?.Invoke(); });
+            switch (_addType)
+            {
+                case AddType.Append:
+                    animationSequence.Sequence.AppendCallback(() => { _callback?.Invoke(); });
+                    break;
+
+                case AddType.Join:
+                    animationSequence.Sequence.JoinCallback(() => { _callback?.Invoke(); });
+                    break;
+
+                case AddType.Insert:
+                    animationSequence.Sequence.InsertCallback(_insertTime, () => { _callback?.Invoke(); });
+                    break;
+            }
         }
     }
 }

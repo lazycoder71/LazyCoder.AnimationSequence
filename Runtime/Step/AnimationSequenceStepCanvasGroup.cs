@@ -12,7 +12,7 @@ namespace LazyCoder.AnimationSequence
         [Range(0f, 1f)]
         [SerializeField] private float _alpha = 1.0f;
 
-        public override string DisplayName { get { return $"{((_isSelf || _owner == null) ? "CanvasGroup (This)" : _owner.name)}: DOFade"; } }
+        public override string DisplayName => base.DisplayName + "Fade";
 
         protected override Tween GetTween(AnimationSequence animationSequence)
         {
@@ -33,6 +33,14 @@ namespace LazyCoder.AnimationSequence
             CanvasGroup owner = _isSelf ? animationSequence.GetComponent<CanvasGroup>() : _owner;
 
             return owner.DOFade(owner.alpha, 0.0f);
+        }
+        
+        public override void Setup(AnimationSequence animationSequence)
+        {
+            CanvasGroup owner = _isSelf ? animationSequence.GetComponent<CanvasGroup>() : _owner;
+
+            if (_changeStartValue)
+                owner.alpha = _alphaStart;
         }
     }
 }

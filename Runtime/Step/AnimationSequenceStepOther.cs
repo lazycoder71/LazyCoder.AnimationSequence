@@ -15,7 +15,7 @@ namespace LazyCoder.AnimationSequence
 
         [SerializeField] private AnimationSequence _other;
 
-        public override string DisplayName => "Other";
+        public override string DisplayName => "Other Animation Sequence";
 
         public override void AddToSequence(AnimationSequence animationSequence)
         {
