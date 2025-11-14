@@ -19,7 +19,7 @@ namespace LazyCoder.AnimationSequencer
 
         public override void AddToSequence(AnimationSequence animationSequence)
         {
-            _other.Kill();
+            _other.Stop();
 
             switch (_addType)
             {

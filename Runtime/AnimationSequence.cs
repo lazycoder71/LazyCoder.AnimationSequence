@@ -25,6 +25,11 @@ namespace LazyCoder.AnimationSequencer
             Pause = 1 << 2,
         }
 
+        [Title("Steps")]
+        [ListDrawerSettings(ShowIndexLabels = false, OnBeginListElementGUI = "BeginDrawListElement",
+            OnEndListElementGUI = "EndDrawListElement", AddCopiesLastElement = true)]
+        [SerializeReference] private AnimationSequenceStep[] _steps = Array.Empty<AnimationSequenceStep>();
+
         [Title("Settings")]
         [SerializeField] private bool _isAutoKill = true;
 
@@ -58,9 +63,6 @@ namespace LazyCoder.AnimationSequencer
         private Transform _transform;
 
         private GameObject _gameObject;
-
-        // Cache of discovered steps (not serialized)
-        private AnimationSequenceStep[] _steps = Array.Empty<AnimationSequenceStep>();
 
         public Transform Transform
         {
@@ -143,8 +145,7 @@ namespace LazyCoder.AnimationSequencer
 
         private void OnEnable()
         {
-            // Discover and setup step components
-            _steps = DiscoverSteps();
+            // Setup each step with context of this sequence
             for (int i = 0; i < _steps.Length; i++)
                 _steps[i].Setup(this);
 
@@ -176,12 +177,6 @@ namespace LazyCoder.AnimationSequencer
 
         #endregion
 
-        // Made public so the custom editor can query current components
-        public AnimationSequenceStep[] DiscoverSteps()
-        {
-            return GetComponents<AnimationSequenceStep>();
-        }
-
         private void InitSequence()
         {
             // fixed null-check to avoid NullReferenceException
@@ -191,8 +186,6 @@ namespace LazyCoder.AnimationSequencer
             _sequence?.Kill();
             _sequence = DOTween.Sequence();
 
-            // Refresh discovered steps to ensure latest order/components
-            _steps = DiscoverSteps();
             for (int i = 0; i < _steps.Length; i++)
             {
                 _steps[i].AddToSequence(this);
@@ -228,6 +221,8 @@ namespace LazyCoder.AnimationSequencer
             _sequence?.Play();
         }
 
+        [ButtonGroup]
+        [Button(Name = "", Icon = SdfIconType.ArrowRepeat)]
         public void Restart()
         {
             InitSequence();
@@ -235,62 +230,43 @@ namespace LazyCoder.AnimationSequencer
             _sequence?.Restart();
         }
 
-        public void Kill()
-        {
-            _sequence?.Kill();
-            _sequence = null;
-        }
-
-#if UNITY_EDITOR
-
         [ButtonGroup]
-        [Button(Name = "", Icon = SdfIconType.SkipStartFill)]
-        public void PlayBackward()
+        [Button(Name = "", Icon = SdfIconType.PauseFill)]
+        public void Pause()
         {
-            _sequence?.PlayBackwards();
-        }
+            InitSequence();
 
-        [ButtonGroup]
-        [Button(Name = "", Icon = SdfIconType.SkipEndFill)]
-        public void PlayForward()
-        {
-            _sequence?.PlayForward();
+            _sequence?.Pause();
         }
 
         [ButtonGroup]
         [Button(Name = "", Icon = SdfIconType.StopFill)]
         public void Stop()
         {
-            DG.DOTweenEditor.DOTweenEditorPreview.Stop(true);
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                DG.DOTweenEditor.DOTweenEditorPreview.Stop(true);
+#endif
 
             _sequence?.Kill();
             _sequence = null;
         }
 
-        [ButtonGroup]
-        [Button(Name = "", Icon = SdfIconType.SkipBackwardFill)]
-        private void Rewind()
-        {
-            _sequence?.Rewind();
-        }
-
-        [ButtonGroup]
-        [Button(Name = "", Icon = SdfIconType.SkipForwardFill)]
-        private void Complete()
-        {
-            _sequence?.Complete();
-        }
+#if UNITY_EDITOR
 
         private void BeginDrawListElement(int index)
         {
-            // kept for compatibility with any custom editor logic
-            if (index >= 0 && index < _steps.Length)
-                Sirenix.Utilities.Editor.SirenixEditorGUI.BeginBox(_steps[index].DisplayName);
+            // Kept for compatibility with any custom editor logic
+            if (index >= 0 && _steps != null && index < _steps.Length)
+                Sirenix.Utilities.Editor.SirenixEditorGUI.BeginBox(_steps[index] == null
+                    ? "Null"
+                    : _steps[index].DisplayName);
         }
 
         private void EndDrawListElement(int index)
         {
-            Sirenix.Utilities.Editor.SirenixEditorGUI.EndBox();
+            if (index >= 0 && _steps != null && index < _steps.Length)
+                Sirenix.Utilities.Editor.SirenixEditorGUI.EndBox();
         }
 
 #endif

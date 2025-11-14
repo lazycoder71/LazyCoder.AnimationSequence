@@ -1,9 +1,9 @@
 using System;
-using UnityEngine;
 
 namespace LazyCoder.AnimationSequencer
 {
-    public abstract class AnimationSequenceStep : MonoBehaviour
+    [Serializable]
+    public abstract class AnimationSequenceStep
     {
         [Serializable]
         public enum AddType
