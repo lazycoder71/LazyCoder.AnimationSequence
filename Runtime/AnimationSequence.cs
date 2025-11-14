@@ -232,8 +232,7 @@ namespace LazyCoder.AnimationSequencer
         [Button(Name = "", Icon = SdfIconType.PauseFill)]
         public void Pause()
         {
-            InitSequence();
-
+            // Do not initialize a new sequence when pausing; only pause if it exists.
             _sequence?.Pause();
         }
 
