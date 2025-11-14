@@ -179,7 +179,7 @@ namespace LazyCoder.AnimationSequencer
 
         private void InitSequence()
         {
-            // fixed null-check to avoid NullReferenceException
+            // Check if sequence exists and is active before early return
             if (_sequence != null && _sequence.IsActive())
                 return;
 
