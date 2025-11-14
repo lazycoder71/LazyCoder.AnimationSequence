@@ -1,7 +1,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace LazyCoder.AnimationSequence
+namespace LazyCoder.AnimationSequencer
 {
     public abstract class AnimationSequenceStepRectTransform : AnimationSequenceStepAction<RectTransform>
     {

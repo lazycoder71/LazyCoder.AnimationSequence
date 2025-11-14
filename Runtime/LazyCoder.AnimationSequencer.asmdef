@@ -1,6 +1,6 @@
 {
-    "name": "LazyCoder.AnimationSequence",
-    "rootNamespace": "LazyCoder.AnimationSequence",
+    "name": "LazyCoder.AnimationSequencer",
+    "rootNamespace": "LazyCoder.AnimationSequencer",
     "references": [
         "LazyCoder.Core",
         "DOTween.Modules"

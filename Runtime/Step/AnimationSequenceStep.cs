@@ -1,6 +1,6 @@
 using System;
 
-namespace LazyCoder.AnimationSequence
+namespace LazyCoder.AnimationSequencer
 {
     [Serializable]
     public abstract class AnimationSequenceStep
@@ -12,13 +12,14 @@ namespace LazyCoder.AnimationSequence
             Join = 1,
             Insert = 2,
         }
+        
+        // Friendly name for editor display (can be overridden)
+        public virtual string DisplayName => GetType().Name;
 
-        public abstract string DisplayName { get; }
+        // Called from AnimationSequence.OnEnable to provide context/setup
+        public virtual void Setup(AnimationSequence sequence) { }
 
-        public abstract void AddToSequence(AnimationSequence animationSequence);
-
-        public virtual void Setup(AnimationSequence animationSequence)
-        {
-        }
+        // Implement this to add a tween to the provided sequence
+        public abstract void AddToSequence(AnimationSequence sequence);
     }
 }

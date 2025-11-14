@@ -2,7 +2,7 @@ using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace LazyCoder.AnimationSequence
+namespace LazyCoder.AnimationSequencer
 {
     public abstract class AnimationSequenceStepAction<T> : AnimationSequenceStep where T : class
     {
@@ -26,7 +26,6 @@ namespace LazyCoder.AnimationSequence
         [Min(0.01f)]
         [SuffixLabel("@_isSpeedBased?\"Unit/Second\":\"Second(s)\"")]
         [InlineButton("@_isSpeedBased = !_isSpeedBased", Label = "@_isSpeedBased ? \"Speed Based\" : \"Duration\"")]
-        [LabelText("@_isSpeedBased ? \"Speed\" : \"Duration\"")]
         [SerializeField] protected float _duration = 1.0f;
 
         [SerializeField] private Ease _ease = Ease.Linear;

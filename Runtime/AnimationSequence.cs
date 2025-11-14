@@ -4,8 +4,9 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace LazyCoder.AnimationSequence
+namespace LazyCoder.AnimationSequencer
 {
+    [DisallowMultipleComponent]
     public class AnimationSequence : MonoBehaviour
     {
         [Serializable, Flags]
@@ -144,7 +145,7 @@ namespace LazyCoder.AnimationSequence
 
         private void OnEnable()
         {
-            // Setup all steps
+            // Setup each step with context of this sequence
             for (int i = 0; i < _steps.Length; i++)
                 _steps[i].Setup(this);
 
@@ -178,7 +179,8 @@ namespace LazyCoder.AnimationSequence
 
         private void InitSequence()
         {
-            if (_sequence.IsActive())
+            // Check if sequence exists and is active before early return
+            if (_sequence != null && _sequence.IsActive())
                 return;
 
             _sequence?.Kill();
@@ -218,7 +220,7 @@ namespace LazyCoder.AnimationSequence
 
             _sequence?.Play();
         }
-
+        
         public void Restart()
         {
             InitSequence();
@@ -226,60 +228,42 @@ namespace LazyCoder.AnimationSequence
             _sequence?.Restart();
         }
 
-        public void Kill()
+        [ButtonGroup]
+        [Button(Name = "", Icon = SdfIconType.PauseFill)]
+        public void Pause()
         {
+            // Do not initialize a new sequence when pausing; only pause if it exists.
+            _sequence?.Pause();
+        }
+
+        [ButtonGroup]
+        [Button(Name = "", Icon = SdfIconType.StopFill)]
+        public void Stop()
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                DG.DOTweenEditor.DOTweenEditorPreview.Stop(true);
+#endif
+
             _sequence?.Kill();
             _sequence = null;
         }
 
 #if UNITY_EDITOR
 
-        [ButtonGroup]
-        [Button(Name = "", Icon = SdfIconType.SkipStartFill)]
-        private void PlayBackward()
-        {
-            _sequence?.PlayBackwards();
-        }
-
-        [ButtonGroup]
-        [Button(Name = "", Icon = SdfIconType.SkipEndFill)]
-        private void PlayForward()
-        {
-            _sequence?.PlayForward();
-        }
-
-        [ButtonGroup]
-        [Button(Name = "", Icon = SdfIconType.StopFill)]
-        private void Stop()
-        {
-            DG.DOTweenEditor.DOTweenEditorPreview.Stop(true);
-
-            _sequence?.Kill();
-            _sequence = null;
-        }
-
-        [ButtonGroup]
-        [Button(Name = "", Icon = SdfIconType.SkipBackwardFill)]
-        private void Rewind()
-        {
-            _sequence?.Rewind();
-        }
-
-        [ButtonGroup]
-        [Button(Name = "", Icon = SdfIconType.SkipForwardFill)]
-        private void Complete()
-        {
-            _sequence?.Complete();
-        }
-
         private void BeginDrawListElement(int index)
         {
-            Sirenix.Utilities.Editor.SirenixEditorGUI.BeginBox(_steps[index].DisplayName);
+            // Kept for compatibility with any custom editor logic
+            if (index >= 0 && _steps != null && index < _steps.Length)
+                Sirenix.Utilities.Editor.SirenixEditorGUI.BeginBox(_steps[index] == null
+                    ? "Null"
+                    : _steps[index].DisplayName);
         }
 
         private void EndDrawListElement(int index)
         {
-            Sirenix.Utilities.Editor.SirenixEditorGUI.EndBox();
+            if (index >= 0 && _steps != null && index < _steps.Length)
+                Sirenix.Utilities.Editor.SirenixEditorGUI.EndBox();
         }
 
 #endif

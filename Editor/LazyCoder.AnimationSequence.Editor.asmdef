@@ -1,8 +1,8 @@
 {
-    "name": "LFramework.AnimationSequence.Editor",
-    "rootNamespace": "",
+    "name": "LazyCoder.AnimationSequencer.Editor",
+    "rootNamespace": "LazyCoder.AnimationSequencer.Editor",
     "references": [
-        "LazyCoder.AnimationSequence"
+        "LazyCoder.AnimationSequencer"
     ],
     "includePlatforms": [
         "Editor"

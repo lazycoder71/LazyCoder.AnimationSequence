@@ -2,7 +2,7 @@ using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace LazyCoder.AnimationSequence
+namespace LazyCoder.AnimationSequencer
 {
     public class AnimationSequenceStepOther : AnimationSequenceStep
     {
@@ -19,7 +19,7 @@ namespace LazyCoder.AnimationSequence
 
         public override void AddToSequence(AnimationSequence animationSequence)
         {
-            _other.Kill();
+            _other.Stop();
 
             switch (_addType)
             {
