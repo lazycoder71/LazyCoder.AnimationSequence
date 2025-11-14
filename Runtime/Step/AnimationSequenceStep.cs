@@ -19,7 +19,7 @@ namespace LazyCoder.AnimationSequencer
         // Called from AnimationSequence.OnEnable to provide context/setup
         public virtual void Setup(AnimationSequence sequence) { }
 
-        // Implement this to add tween to the provided sequence
+        // Implement this to add a tween to the provided sequence
         public abstract void AddToSequence(AnimationSequence sequence);
     }
 }
