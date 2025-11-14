@@ -220,9 +220,7 @@ namespace LazyCoder.AnimationSequencer
 
             _sequence?.Play();
         }
-
-        [ButtonGroup]
-        [Button(Name = "", Icon = SdfIconType.ArrowRepeat)]
+        
         public void Restart()
         {
             InitSequence();
