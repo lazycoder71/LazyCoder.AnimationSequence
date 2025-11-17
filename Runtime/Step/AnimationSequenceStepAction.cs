@@ -23,7 +23,6 @@ namespace LazyCoder.AnimationSequencer
         [HideInInspector]
         [SerializeField] protected bool _isSpeedBased = false;
 
-        [Min(0.01f)]
         [SuffixLabel("@_isSpeedBased?\"Unit/Second\":\"Second(s)\"")]
         [InlineButton("@_isSpeedBased = !_isSpeedBased", Label = "@_isSpeedBased ? \"Speed Based\" : \"Duration\"")]
         [SerializeField] protected float _duration = 1.0f;

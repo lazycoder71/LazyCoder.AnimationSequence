@@ -180,7 +180,7 @@ namespace LazyCoder.AnimationSequencer
         private void InitSequence()
         {
             // Check if sequence exists and is active before early return
-            if (_sequence != null && _sequence.IsActive())
+            if (_sequence.IsActive())
                 return;
 
             _sequence?.Kill();
@@ -220,7 +220,7 @@ namespace LazyCoder.AnimationSequencer
 
             _sequence?.Play();
         }
-        
+
         public void Restart()
         {
             InitSequence();
